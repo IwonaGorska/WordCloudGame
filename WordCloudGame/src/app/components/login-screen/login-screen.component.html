@@ -1,0 +1,14 @@
+<div id='screen'>
+    <div id='screenContent'>
+        <div id='gameName'>
+          Wordcloud game
+        </div>
+        <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" id='appForm'>
+            <input type="text" class="form-control" id="nickName"
+                required
+                [(ngModel)]="nickName" placeholder={{nickPlaceholder}} name="nickName">
+            <button class='appButton' type="submit" [disabled]="!nickName">play</button>
+        </form>
+    </div>
+</div>
+
