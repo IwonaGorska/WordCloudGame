@@ -38,22 +38,20 @@ export class GameScreenComponent implements OnInit {
     //proportion of the board in pdf is 7:12
     //we're looking for y in: 7y * 12y = x, where x is number of the words
 
-    // let result = 0;
-    // if(this.words){
-    //   result = Math.sqrt(this.words.length/84);
+    // let y = 1;
+    // while(84*Math.pow(y, 2) < this.words.length){
+    //   y++;
     // }
-    // this.boardWidth = 12 * result;
-    // this.boardHeight = 7 * result;
-    // console.log(result);
-    // console.log(this.boardWidth);
-    // console.log(this.boardHeight);
+    // this.boardWidth = 12 * y;
+    // this.boardHeight = 7 * y;
 
-    let y = 1;
-    while(84*Math.pow(y, 2) < this.words.length){
-      y++;
+    //But let's keep it as a square for better look on mobile devices
+    let a = 1;
+    while(Math.pow(a, 2) < this.words.length){
+      a++;
     }
-    this.boardWidth = 12 * y;
-    this.boardHeight = 7 * y;
+    this.boardWidth = a;
+    this.boardHeight = a;
   }
 
   preparePlainBoard(){
