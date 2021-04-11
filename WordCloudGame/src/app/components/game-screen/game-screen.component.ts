@@ -150,7 +150,7 @@ export class GameScreenComponent implements OnInit {
     while(Math.pow(a, 2) < this.allWords.length){ 
       a++;
     }
-    a++; // +1 to keep more distance
+    a+=2; // +2 to keep more distance
     this.boardWidth = a;
     this.boardHeight = a;
   }
