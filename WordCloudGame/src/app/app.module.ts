@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { GameScreenComponent } from './components/game-screen/game-screen.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ResultScreenComponent } from './components/result-screen/result-screen.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ResultScreenComponent } from './components/result-screen/result-screen.
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

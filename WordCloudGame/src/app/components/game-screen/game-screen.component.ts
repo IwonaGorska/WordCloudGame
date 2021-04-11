@@ -1,4 +1,85 @@
 import { Component, OnInit } from '@angular/core';
+import { injectMocks } from 'data-mocks';
+import { HttpClient} from '@angular/common/http';
+import { Scenarios } from 'data-mocks/dist/types';
+
+const scenarios: Scenarios = {
+  default: [
+    {
+      url: /words/,
+      method: 'GET',
+      response: {
+        "0": {
+          "question": "select animals",
+          "all_words": [
+            "hole",
+            "sofa",
+            "pear",
+            "tiger",
+            "oatmeal",
+            "square",
+            "nut",
+            "cub",
+            "shirt",
+            "tub",
+            "passenger",
+            "cow"
+          ],
+          "good_words": [
+            "tiger",
+            "cow"
+          ]
+        },
+        "1": {
+          "question": "select colors",
+          "all_words": [
+            "jeans",
+            "existence",
+            "ink",
+            "red",
+            "blue",
+            "yellow",
+            "laugh",
+            "behavior",
+            "expansion",
+            "white",
+            "black",
+            "cakes"
+          ],
+          "good_words": [
+            "red",
+            "blue",
+            "yellow",
+            "white",
+            "black"
+          ]
+        },
+        "2": {
+          "question": "select vehicles",
+          "all_words": [
+            "belief",
+            "wire",
+            "car",
+            "bus",
+            "star",
+            "river",
+            "hat",
+            "skirt",
+            "train"
+          ],
+          "good_words": [
+            "car",
+            "bus",
+            "train"
+          ]
+        }
+      },
+      responseCode: 200
+    }
+  ]
+};
+
+injectMocks(scenarios, 'default', {allowXHRPassthrough: true, allowFetchPassthrough: true});
 
 interface Word {
   isMarked: boolean;
@@ -16,22 +97,41 @@ interface Word {
 })
 export class GameScreenComponent implements OnInit {
 
-  words:string[] = ["Alice", "Bob", "Eve", 'Rob', 'Iwona', 'Mark', 'Martin', 'Dave'];
-  question:string = 'Select animals';
+  // words:string[] = ["Alice", "Bob", "Eve", 'Rob', 'Iwona', 'Mark', 'Martin', 'Dave'];
+  question:string = '';
   boardWidth: number;
   boardHeight: number;
   chosenCells:number[] = [];
   board: Word[][] = [];
   checkingAnswers: boolean = false;
   score: number;
+  wordsTest: any;
+  allWords: string[] = [];
+  goodWords: string[] = [];
+  questionNumber: number;
 
-  constructor() { }
+  constructor(private http: HttpClient) { 
+  }
 
   ngOnInit(): void {
-    this.countBoardDimensions();
-    this.preparePlainBoard();
-    this.drawCells();
-    this.buildWordObjects();
+    this.questionNumber = Math.floor(Math.random() * 3); // 0, 1 or 2
+    this.http.get('https://foo.d/words').subscribe(
+      data => {
+        console.log('Successfully fetched words data ', data);
+        let rawQuestion = data[this.questionNumber].question;
+        this.question = rawQuestion.charAt(0).toUpperCase() + rawQuestion.slice(1);
+        this.allWords = data[this.questionNumber].all_words;
+        this.goodWords = data[this.questionNumber].good_words;
+
+        this.countBoardDimensions();
+        this.preparePlainBoard();
+        this.drawCells();
+        this.buildWordObjects();
+      },
+      error => {
+        console.log('Error in fetching words data :(', error);
+      }
+    ); 
   }
 
   countBoardDimensions(): void{
@@ -47,9 +147,10 @@ export class GameScreenComponent implements OnInit {
 
     //But let's keep it as a square for better look on mobile devices
     let a = 1;
-    while(Math.pow(a, 2) < this.words.length){
+    while(Math.pow(a, 2) < this.allWords.length){ 
       a++;
     }
+    a++; // +1 to keep more distance
     this.boardWidth = a;
     this.boardHeight = a;
   }
@@ -82,7 +183,7 @@ export class GameScreenComponent implements OnInit {
       allCells.push(i);
     }
     allCells = allCells.sort(() => Math.random() - 0.5);
-    for(let i = 0; i < this.words.length; i++){
+    for(let i = 0; i < this.allWords.length; i++){
       this.chosenCells.push(allCells[i]);
     }
   }
@@ -91,8 +192,8 @@ export class GameScreenComponent implements OnInit {
     for(let i = 0; i < this.chosenCells.length; i++){
       let wordObject: Word = {
         isMarked: false,
-        isCorrect: true,
-        word: this.words[i],
+        isCorrect: this.goodWords.includes(this.allWords[i]),
+        word: this.allWords[i],
         number: this.chosenCells[i],
         rowNumber: Math.floor(this.chosenCells[i]/this.boardWidth),
         columnNumber: this.chosenCells[i] - (Math.floor(this.chosenCells[i]/this.boardWidth) * this.boardWidth)
@@ -100,18 +201,6 @@ export class GameScreenComponent implements OnInit {
       
       this.board[wordObject.rowNumber][wordObject.columnNumber] = wordObject;
     }
-    // for(let i = 0; i < this.chosenCells.length; i++){
-    //   let wordObject: any = {};
-    //   // let wordObject: {isMarked: boolean; isCorrect: boolean; word: string; rowNumber: number; columnNumber: number};
-    //   wordObject.isAlive = true;
-    //   wordObject.isMarked = false;
-    //   wordObject.isCorrect = false;
-    //   wordObject.word = this.words[i];
-    //   wordObject.number = this.chosenCells[i];
-    //   wordObject.rowNumber = Math.floor(this.chosenCells[i]/this.boardWidth);
-    //   wordObject.columnNumber = this.chosenCells[i] - (Math.floor(this.chosenCells[i]/this.boardWidth) * this.boardWidth);
-    //   this.board[wordObject.rowNumber][wordObject.columnNumber] = wordObject;
-    // }
   }
 
   markWord(row: number, column: number){
@@ -130,8 +219,6 @@ export class GameScreenComponent implements OnInit {
           color = '#FF0000';
         }
     }
-
-
     return color;
   }
 
@@ -159,7 +246,6 @@ export class GameScreenComponent implements OnInit {
     }
 
     this.score = markedCorrectAnswers * 2 - (markedWrongAnswers + unmarkedCorrectAnswers);
-    // console.log(this.score);
     sessionStorage.setItem('scoreWordCloudGame', this.score + '');
   }
 }
