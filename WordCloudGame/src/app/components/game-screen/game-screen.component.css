@@ -1,0 +1,35 @@
+#wordsContainer{
+    border:1px solid black;
+    border-radius: 4px;
+    width: 80%;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+#gameContainer{
+    text-align: center;
+}
+
+#question{
+    font-weight: 800;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.wordbutton{
+    width: 100%;
+    background-color: #fff;
+    border: 0px;
+    font-weight: 700;
+    font-family:Arial, Helvetica, sans-serif;
+    /* height: 100%; */
+}
+
+/* .wordCell{
+    padding: 0px;
+} */
+
+table, th, td {
+    /* border: 1px solid black; */
+    width: 100%;
+    table-layout: fixed;
+  }

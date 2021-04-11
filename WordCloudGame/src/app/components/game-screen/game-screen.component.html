@@ -1,0 +1,24 @@
+<div class='mainContainer'>
+    <p id='question'>
+        {{question}}
+    </p>
+    <div id='wordsContainer'>
+        <table class='table' *ngIf="board">
+            <tbody>
+                <tr *ngFor="let data of board; index as i">
+                    <td *ngFor="let cell of data; index as j">
+                        <p *ngIf="cell.word" class='wordCell'>
+                            <button class='wordbutton' (click)='markWord(i, j)' [disabled]='checkingAnswers' [ngStyle]="{'color':getColor(cell.isMarked, cell.isCorrect)}">
+                                {{ cell.word }}
+                            </button>
+                        </p>
+                        <p *ngIf="!cell.word"> &nbsp;</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button class='appButton' (click)='finishGame()' [routerLink]="'result'">finish game</button>
+    <button *ngIf="!checkingAnswers" class='appButton' (click)='checkAnswers()'>check answers</button>
+    <!-- <button *ngIf='checkingAnswers' class='appButton' (click)='finishGame()'>finish game</button> -->
+</div>
