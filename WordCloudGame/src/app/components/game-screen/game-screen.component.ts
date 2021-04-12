@@ -1,85 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { injectMocks } from 'data-mocks';
-import { HttpClient} from '@angular/common/http';
-import { Scenarios } from 'data-mocks/dist/types';
-
-const scenarios: Scenarios = {
-  default: [
-    {
-      url: /words/,
-      method: 'GET',
-      response: {
-        "0": {
-          "question": "select animals",
-          "all_words": [
-            "hole",
-            "sofa",
-            "pear",
-            "tiger",
-            "oatmeal",
-            "square",
-            "nut",
-            "cub",
-            "shirt",
-            "tub",
-            "passenger",
-            "cow"
-          ],
-          "good_words": [
-            "tiger",
-            "cow"
-          ]
-        },
-        "1": {
-          "question": "select colors",
-          "all_words": [
-            "jeans",
-            "existence",
-            "ink",
-            "red",
-            "blue",
-            "yellow",
-            "laugh",
-            "behavior",
-            "expansion",
-            "white",
-            "black",
-            "cakes"
-          ],
-          "good_words": [
-            "red",
-            "blue",
-            "yellow",
-            "white",
-            "black"
-          ]
-        },
-        "2": {
-          "question": "select vehicles",
-          "all_words": [
-            "belief",
-            "wire",
-            "car",
-            "bus",
-            "star",
-            "river",
-            "hat",
-            "skirt",
-            "train"
-          ],
-          "good_words": [
-            "car",
-            "bus",
-            "train"
-          ]
-        }
-      },
-      responseCode: 200
-    }
-  ]
-};
-
-injectMocks(scenarios, 'default', {allowXHRPassthrough: true, allowFetchPassthrough: true});
+import {WordsServiceService} from '../../services/words-service.service';
 
 interface Word {
   isMarked: boolean;
@@ -97,7 +17,6 @@ interface Word {
 })
 export class GameScreenComponent implements OnInit {
 
-  // words:string[] = ["Alice", "Bob", "Eve", 'Rob', 'Iwona', 'Mark', 'Martin', 'Dave'];
   question:string = '';
   boardWidth: number;
   boardHeight: number;
@@ -110,12 +29,12 @@ export class GameScreenComponent implements OnInit {
   goodWords: string[] = [];
   questionNumber: number;
 
-  constructor(private http: HttpClient) { 
+  constructor(private wordService: WordsServiceService) { 
   }
 
   ngOnInit(): void {
     this.questionNumber = Math.floor(Math.random() * 3); // 0, 1 or 2
-    this.http.get('https://foo.d/words').subscribe(
+    this.wordService.getAll().subscribe(
       data => {
         console.log('Successfully fetched words data ', data);
         let rawQuestion = data[this.questionNumber].question;
