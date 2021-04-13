@@ -33,10 +33,12 @@ export class GameScreenComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.questionNumber = Math.floor(Math.random() * 3); // 0, 1 or 2
     this.wordService.getAll().subscribe(
       data => {
-        console.log('Successfully fetched words data ', data);
+        // console.log('Successfully fetched words data ', data);
+        var questions
+        this.questionNumber = Math.floor(Math.random() * Object.keys(data).length);//select random questions set
+        //Object.keys(data).length - number of questions' sets
         let rawQuestion = data[this.questionNumber].question;
         this.question = rawQuestion.charAt(0).toUpperCase() + rawQuestion.slice(1);
         this.allWords = data[this.questionNumber].all_words;
@@ -127,16 +129,16 @@ export class GameScreenComponent implements OnInit {
   }
 
   getColor(isMarked: boolean, isCorrect: boolean){
-    let color = '#808080';
-    if(!this.checkingAnswers){
-      if(isMarked)
-        color = '#000000';
-    } else{
+    let color = '#000000';
+    if(isMarked){
+      color = '#808080';
+      if(this.checkingAnswers){
         if(isCorrect){
           color = '#00FF00';
         } else{
           color = '#FF0000';
         }
+      }
     }
     return color;
   }
